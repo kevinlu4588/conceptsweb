@@ -1,0 +1,248 @@
+<!doctype html>
+<html lang="en">
+<head>
+<title>When Are Concepts Erased From Diffusion Models?</title>
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<meta name="description" content="Investigating whether concept erasure in diffusion models truly removes knowledge or merely avoids it, with a comprehensive suite of probing techniques." />
+<meta property="og:title" content="When Are Concepts Erased From Diffusion Models?" />
+<meta property="og:description" content="Investigating whether concept erasure in diffusion models truly removes knowledge or merely avoids it, with a comprehensive suite of probing techniques." />
+<meta property="og:type" content="website" />
+<meta name="twitter:card" content="summary" /> 
+<meta name="twitter:title" content="When Are Concepts Erased From Diffusion Models?" />
+<meta name="twitter:description" content="Investigating whether concept erasure in diffusion models truly removes knowledge or merely avoids it, with a comprehensive suite of probing techniques." />
+<link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+<link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16.png">
+<link rel="manifest" href="/site.webmanifest">
+
+<link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-rwoIResjU2yc3z8GV/NPeZWAv56rSmLldC3R/AZzGRnGxQQKnKkoFVhFQhNUwEyJ" crossorigin="anonymous">
+<script src="https://code.jquery.com/jquery-3.2.1.min.js" integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4=" crossorigin="anonymous"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Math&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,700" rel="stylesheet">
+<link href="style.css" rel="stylesheet">
+
+<style>
+.relatedthumb {
+  float:left; width: 200px; margin: 3px 10px 7px 0;
+}
+.relatedblock {
+  clear: both;
+  display: inline-block;
+}
+.bold-sc {
+  font-variant: small-caps;
+  font-weight: bold;
+}
+.cite, .citegroup {
+  margin-bottom: 8px;
+}
+:target {
+  background-color: yellow;
+}
+</style>
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-FD12LWN557"></script>
+<script>
+window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag('js', new Date()); gtag('config', 'G-FD12LWN557');
+</script>
+
+</head>
+<body class="nd-docs">
+<div class="nd-pageheader">
+ <div class="container">
+ <h1 class="lead">
+ <nobr class="widenobr">When Are Concepts</nobr>
+ <nobr class="widenobr">Erased From</nobr>
+ <nobr class="widenobr">Diffusion Models?</nobr>
+ </h1>
+<address>
+  <nobr><a href="https://kevinlu4588.github.io/" target="_blank"
+  >Kevin Lu</a><sup>1</sup>,</nobr>
+  <nobr>Nicky Kriplani<sup>2</sup>,</nobr>
+  <nobr><a href="https://rohitgandikota.github.io/" target="_blank"
+  >Rohit Gandikota</a><sup>1</sup>,</nobr>
+  <nobr><a href="https://www.mnpham.com/" target="_blank"
+  >Minh Pham</a><sup>2</sup>,</nobr>
+  <nobr><a href="https://baulab.info/" target="_blank"
+  >David Bau</a><sup>1</sup>,</nobr>
+ <br>
+  <nobr><a href="https://chinmayhegde.github.io/" target="_blank"
+  >Chinmay Hegde</a><sup>2</sup>,</nobr>
+  <nobr><a href="https://nivc.github.io/" target="_blank"
+  >Niv Cohen</a><sup>2</sup></nobr>
+ <br>
+  <nobr><sup>1</sup><a href="https://khoury.northeastern.edu/" target="_blank"
+  >Northeastern University</a>,</nobr>
+  <nobr><sup>2</sup><a href="https://cs.nyu.edu/" target="_blank"
+  >New York University</a></nobr>
+ <br><br>
+  <nobr>The Thirty-Ninth Annual Conference on Neural Information Processing Systems (<a href="https://neurips.cc/Conferences/2025" target="_blank">NeurIPS 2025</a>)</nobr>
+
+</address>
+ </div>
+</div><!-- end nd-pageheader -->
+
+<div class="container">
+<div class="row justify-content-center text-center">
+
+<p>
+<a href="https://arxiv.org/pdf/2502.XXXXX.pdf" class="d-inline-block p-3 align-top" target="_blank"><img height="100" width="78" src="images/paper-thumb.png" style="border:1px solid; margin: 0 38px;" alt="ArXiv Preprint thumbnail" data-nothumb=""><br>ArXiv<br>Preprint</a>
+<a href="https://github.com/kevinlu4588/WhenAreConceptsErased" class="d-inline-block p-3 align-top" target="_blank"><img height="100" width="78" src="images/code-thumb.png" style="border:1px solid; margin: 0 38px;" alt="Github code thumbnail" data-nothumb=""><br>Source Code<br>Github</a>
+<!-- <a href="https://unified.baulab.info/weights/uce_models/" class="d-inline-block p-3 align-top" target="_blank"><img height="100" width="78" src="images/data-thumb.png" style="border:1px solid; margin: 0 38px;" alt="Data thumbnail" data-nothumb=""><br>Fine-Tuned<br>Model  Weights</a> -->
+<!-- <a href="https://huggingface.co/spaces/baulab/Erasing-Concepts-In-Diffusion" class="d-inline-block p-3 align-bottom" target="_blank"><img height="78" width="104" src="images/demo3x4-thumb.png" style="border:1px solid" alt="Huggingface demo thumbnail" data-nothumb=""><br>Huggingface<br>Demo</a> -->
+</p>
+
+<div class="card" style="max-width: 1020px;">
+<div class="card-block">
+<h3>When are concepts truly erased from diffusion models?</h3>
+<p>
+In concept erasure, a model is modified to selectively prevent it from generating a target concept. Despite the rapid development of new methods, it remains unclear how thoroughly these approaches remove the target concept from the model. 
+</p>
+<p>
+We begin by proposing <b>two conceptual models for the erasure mechanism in diffusion models</b>: (i) interfering with the model's internal guidance processes, and (ii) reducing the unconditional likelihood of generating the target concept, potentially removing it entirely. 
+</p>
+<p>
+To assess whether a concept has been truly erased from the model, we introduce <b>a comprehensive suite of independent probing techniques</b>: supplying visual context, modifying the diffusion trajectory, applying classifier guidance, and analyzing the model's alternative generations that emerge in place of the erased concept. Our results shed light on the value of exploring concept erasure robustness outside of adversarial text inputs, and emphasize the importance of comprehensive evaluations for erasure in diffusion models.
+</p>
+</div><!--card-block-->
+</div><!--card-->
+
+</div><!--row-->
+  
+<div class="row">
+<div class="col">
+  
+<figure class="center_image" style="margin-top: 30px">
+  <center><img src="images/Figures/figure1-1.png" style="width:100%; max-width:800px"></center>
+  <figcaption>We propose two conceptual models for erasure: (1) <b>Guidance-Based Avoidance</b>, which avoids a concept by redirecting the model to different concept locations. (2) <b>Destruction-Based Removal</b>, which reduces the unconditional likelihood of the target concept while keeping guidance intact.
+  </figcaption>
+</figure>
+
+<h2> Our Comprehensive Evaluation Suite </h2>
+  <p>To empirically differentiate between guidance-based avoidance and destruction-based removal, we introduce a comprehensive evaluation framework that probes multiple pathways through which erased knowledge could resurface. Our suite includes four distinct probing techniques that go beyond traditional adversarial text inputs:</p>
+
+<h3> 1. Visual Context Probing </h3>
+  <p>We investigate whether an erased concept can resurface when the model is provided with visual context. Unlike optimization-based approaches, these methods do not use the network's gradients, providing a different lens on erasure efficacy.</p>
+  
+  <h4> Inpainting Probe </h4>
+  <p>We provide the model with an image of the erased concept but mask out a central portion, testing whether the model can complete the missing region despite erasure.</p>
+  
+  <figure class="center_image" style="margin-top: 30px">
+    <center><img src="images/Figures/inpaint-1.png" style="width:100%; max-width:800px"></center>
+    <figcaption>Task Vector method, despite being robust to adversarial attacks, still inpaints recognizable images of erased concepts when given visual context.
+    </figcaption>
+  </figure>
+  
+  <h4> Diffusion Completion Probe </h4>
+  <p>We run the diffusion process with the original model for a few timesteps (t=5 or t=10 out of 50), then pass the intermediate noisy image to the erased model to complete the generation process.</p>
+  
+  <figure class="center_image" style="margin-top: 30px">
+    <center><img src="images/Figures/diffusion_completion-1.png" style="width:100%; max-width:800px"></center>
+    <figcaption>RECE and STEREO surprisingly reproduce knowledge about erased concepts when completing partially generated images from the original model.
+    </figcaption>
+  </figure>
+<h3> 2. Noise-Based Trajectory Probing </h3>
+  <p>We introduce a training-free method to probe for residual knowledge by directly manipulating the model's generation process. This technique searches for hidden knowledge traces by augmenting the diffusion trajectory with controlled Gaussian noise.</p>
+
+  <figure class="center_image" style="margin-top: 30px">
+    <center><img src="images/Figures/noisingprobe-1.png" style="width:100%; max-width:800px"></center>
+    <figcaption>Our Noise-Based probing technique adds additional noise to each denoising step, allowing the model to explore alternative generation pathways. Remarkably, this simple method can reveal traces of knowledge even when optimization-based methods fail.
+    </figcaption>
+  </figure>
+  
+  <figure class="center_image" style="margin-top: 30px">
+    <center><img src="images/Figures/summary figure-1.png" style="width:100%; max-width:800px"></center>
+    <figcaption>Overview of erasing model behavior under different probing techniques. Our Noise-Based probe can recover the target concept ("church") even when Textual Inversion and UnlearnDiffAtk fail, particularly for UCE, ESD-x, and ESD-u methods.
+    </figcaption>
+  </figure>
+
+
+<h3> 3. Classifier-Guided Latent Probing </h3>
+  <p>To probe whether erased models still encode latent traces of the target concept, we apply classifier guidance in latent space. We train a lightweight, timestep-aware classifier directly in the latent space and use its gradient to steer the diffusion trajectory toward regions associated with the erased concept.</p>
+  
+  <p>At each denoising step t, we compute the gradient of the binary cross-entropy loss with respect to the latent:</p>
+  
+  <figure class="center_image" style="margin-top: 20px">
+    <center><img src="images/Figures/classifier_guidance_eq1.png" style="width:100%; max-width:400px"></center>
+  </figure>
+  
+  <p>We then use this gradient to update the latent at each timestep:</p>
+  
+  <figure class="center_image" style="margin-top: 20px">
+    <center><img src="images/Figures/classifier_guidance_eq2.png" style="width:100%; max-width:400px"></center>
+  </figure>
+  
+  <p>
+    where s<sub>clf</sub> is the guidance strength and &sigma;<sub>t</sub> controls the effective step size according to the current noise level.
+  </p>
+    
+  <figure class="center_image" style="margin-top: 30px">
+    <center><img src="images/Figures/classifier_guidance-1.png" style="width:100%; max-width:800px"></center>
+    <figcaption>Classifier Guidance with Noise-Based probes significantly improves the visual fidelity and semantic accuracy of recovered concepts. Even STEREO, which resists other probing methods, can regenerate erased concepts when steered by latent classifiers.
+    </figcaption>
+  </figure>
+
+<h3> 4. Dynamic Concept Tracing </h3>
+  <p>We analyze how concept representations evolve during the erasure process by examining the trajectories of alternative generations at different erasure strengths. We prompt the model at various stages using the concept name and inspect the resulting images to understand how different methods degrade concepts.</p>
+  
+  <figure class="center_image" style="margin-top: 30px">
+    <center><img src="images/Figures/concept_tracing.png" style="width:100%; max-width:800px"></center>
+    <figcaption><b>Dynamic concept tracing for Van Gogh style erasure.</b> When comparing generations as concepts are progressively erased, differences between method types become apparent. Methods aligning with destruction-based removal (like GA and Task Vector) degrade concept generation continuously, while guidance-based methods (like ESD-x and ESD-u) produce more abrupt transitions and diverse alternative outputs.
+    </figcaption>
+  </figure>
+  
+
+<h2>How to cite</h2>
+
+<p>The paper can be cited as follows.
+</p>
+
+<div class="card">
+<h3 class="card-header">bibliography</h3>
+<div class="card-block">
+<p style="text-indent: -3em; margin-left: 3em;" class="card-text clickselect">
+Kevin Lu, Nicky Kriplani, Rohit Gandikota, Minh Pham, David Bau, Chinmay Hegde, Niv Cohen. "<em>When Are Concepts Erased From Diffusion Models?</em>"
+39th Conference on Neural Information Processing Systems (NeurIPS 2025).</nobr>
+</p>
+</div>
+<h3 class="card-header">bibtex</h3>
+<div class="card-block">
+<pre class="card-text clickselect">
+@inproceedings{lu2025concepts,
+  title={When Are Concepts Erased From Diffusion Models?},
+  author={Kevin Lu and Nicky Kriplani and Rohit Gandikota and Minh Pham and David Bau and Chinmay Hegde and Niv Cohen},
+  booktitle={39th Conference on Neural Information Processing Systems (NeurIPS)},
+  year={2025}
+}
+</pre>
+</div>
+</div>
+</p>
+
+</div>
+</div><!--row -->
+</div> <!-- container -->
+
+<footer class="nd-pagefooter">
+  <div class="row">
+    <div class="col-6 col-md text-center">
+      <a href="https://baulab.info/">About the Bau Lab</a>
+    </div>
+  </div>
+</footer>
+
+</body>
+<script>
+$(document).on('click', '.clickselect', function(ev) {
+  var range = document.createRange();
+  range.selectNodeContents(this);
+  var sel = window.getSelection();
+  sel.removeAllRanges();
+  sel.addRange(range);
+});
+</script>
+</html>
+
