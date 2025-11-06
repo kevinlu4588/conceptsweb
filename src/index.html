@@ -203,11 +203,17 @@ This classifier provides a gradient signal that steers the diffusion trajectory 
     </figcaption>
   </figure>
   
-<h3> Key Findings </h3>
-<p> After evaluating 7 popular erasure methods across 13 concepts and over 100K generations, we uncovered several key insights:</p>
-1. Visual context and noise-based probing demonstrated that concepts erased using methods like UCE, ESD-x, and ESD-u can be recovered using the original prompt without any form of adversarial optimization. This suggests that these models still encode the concept but weakly guide away from it.
-2. No single evaluation reveals the full picture: methods that withstand adversarial prompts can fail under contextual cues or inference-time steering, highlighting the need for diverse evaluations to verify true knowledge removal.
-3. These findings indicate that most current erasure methods operate through guidance-based avoidance rather than true destruction of underlying representations.
+<h3>Key Findings</h3>
+<p style="font-size: 1.1em; line-height: 1.6;">
+  After evaluating 7 popular erasure methods across 13 concepts and over 100K generations, we uncovered several key insights:
+</p>
+<ol style="font-size: 1.1em; line-height: 1.6;">
+  <li>Visual context and noise-based probing demonstrated that concepts erased using methods like UCE, ESD-x, and ESD-u can be recovered using the original prompt without any form of adversarial optimization. This suggests that these models still encode the concept but weakly guide away from it.</li>
+  <li>No single evaluation reveals the full picture: methods that withstand adversarial prompts can fail under contextual cues or inference-time steering, highlighting the need for diverse evaluations to verify true knowledge removal.</li>
+  <li>Overall, our results suggest that most existing erasure techniques rely on guidance-based avoidance (steering the model away from a concept) rather than destruction-based removal that truly eliminates the underlying representation.</li>
+</ol>
+
+
 <h2>How to cite</h2>
 
 <p>The paper can be cited as follows.
